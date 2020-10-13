@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "dev": "snowpack dev",
+    "dev:css": "npx tailwindcss build src/tailwind.css -o public/stylesheet.css",
+    "start": "snowpack dev",
+    "build": "snowpack build",
+    "build:css": "npx tailwindcss build src/tailwind.css -o dist/stylesheet.css && npx purgecss --css dist/stylesheet.css --content public/index.html src/**/*.svelte --output public/stylesheet.css"
+  },
+  "dependencies": {
+    "svelte": "^3.24.0",
+    "tailwindcss": "^1.8.0",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {
+    "@snowpack/app-scripts-svelte": "^1.8.5",
+    "purgecss": "^3.0.0",
+    "snowpack": "^2.12.0",
+    "svelte-check": "^1.0.0"
+  }
+}
