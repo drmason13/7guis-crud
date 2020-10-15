@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
     import { v4 as uuid } from 'uuid';
 
     let search = "";
@@ -29,7 +30,8 @@
 
     let selected = null;
 
-    function selectUser(user) {
+    function selectUser(e, user) {
+        jumpAreas['selected'] = e.target;
         selected = user.id;
         first = user.first;
         last = user.last;
@@ -55,42 +57,124 @@
         reset();
     }
 
+    let jumpAreas;
+    
+    let currentArea = 'unknown';
+
+    document.addEventListener('focus', updateJumpAreas, true)
+    document.addEventListener('keydown', navigate, false)
+    
+    function updateJumpAreas(e) {
+        currentArea = e.target.getAttribute('jumpArea');
+        if (!currentArea || !Object.keys(jumpAreas).includes(currentArea)) {
+            currentArea = 'unknown';
+        }
+        switch (currentArea) {
+            case 'content':
+            case 'edit':
+                jumpAreas['middle'] = e.target;
+                break;
+        }
+        jumpAreas[currentArea] = e.target;
+    }
+
+    function navigate(e) {
+        let jump;
+        switch (e.key) {
+            case 'ArrowLeft':
+                jump = jumpAreas[jumpLinks[currentArea].left];
+                break;
+            case 'ArrowRight':
+                jump = jumpAreas[jumpLinks[currentArea].right];
+                break;
+            case 'ArrowUp':
+                jump = jumpAreas[jumpLinks[currentArea].up];
+                break;
+            case 'ArrowDown':
+                jump = jumpAreas[jumpLinks[currentArea].down];
+                break;
+            case 'Enter':
+                if (e.target === document.querySelector('#db-view')) {
+                    jump = jumpAreas['selected']
+                }
+                
+        }
+        if (typeof jump !== 'undefined') {
+            jump.focus();
+        }
+    }
+
+    $: console.log(jumpAreas)
+    
+    let jumpLinks = {
+        search: {
+            right: 'edit',
+            down: 'middle',
+        },
+        content: {
+            right: 'edit',
+        },
+        edit: {
+            up: 'search',
+            left: 'content',
+            down: 'action',
+        },
+        action: {
+            up: 'middle',
+        },
+        unknown: {
+            up: 'search',
+            left: 'content',
+            right: 'edit',
+            down: 'action',
+        },
+    }
+
+    onMount(() => {
+        jumpAreas = {
+            search: document.querySelector("#search"),
+            content: document.querySelector("#db-view"),
+            middle: document.querySelector("#db-view"),
+            edit: document.querySelector("#name"),
+            action: document.querySelector("#update"),
+        };
+    })
 </script>
 
-<section class="
+<article class="
     text-beige-800 border-beige-500 bg-beige-50
     max-w-2xl w-full rounded shadow px-2 py-6 border-2
     flex flex-col place-content-center items-center justify-items-center
 ">
     <div class="flex">
-        <article id="left" class="flex flex-col mx-2">
+        <section id="left" class="flex flex-col mx-2">
             <div class="flex flex-grow-0 mb-6">
                 <label for="search" class="w-2/5">Filter prefix: </label>
-                <input id="search" class="w-3/5" bind:value={search}>
+                <input id="search" class="w-3/5 border-2 border-beige-300 rounded" bind:value={search} jumpArea="search">
             </div>
 
-            <ul id="db-view" class="h-64 border-2 border-beige-300 overflow-auto">
+            <ul id="db-view" class="h-64 border-2 border-beige-300 flex flex-col items-stretch content-start overflow-auto" tabindex=0 jumpArea="content">
                 {#each Object.values(users) as user}
-                    <li class="px-2 py-1" class:hover:bg-yellow-200="{selected !== user.id}" class:bg-blue-700="{selected === user.id}" class:text-white="{selected === user.id}" on:click={() => selectUser(user)}>{user.last}, {user.first}</li>
+                    <li><button class="px-2 py-1 w-full" class:focus:bg-yellow-200="{selected !== user.id}" class:hover:bg-yellow-200="{selected !== user.id}" class:bg-blue-700="{selected === user.id}" class:text-white="{selected === user.id}" on:click={e => selectUser(e, user)} jumpArea="content">{user.last}, {user.first}</button></li>
                 {/each}
             </ul>
-        </article>
+        </section>
 
-        <article id="right" class="flex flex-col justify-center mx-2">
-            <div class="flex flex-grow-0">
+        <section id="right" class="flex flex-col justify-center mx-2">
+            <div class="flex flex-grow-0 px-2 py-2">
                 <label for="name" class="w-1/3">Name: </label>
-                <input id="surname" class="w-2/3" bind:value={first}>
+                <input id="name" class="w-2/3 border-2 border-beige-300 rounded" bind:value={first} jumpArea="edit">
             </div>
-            <div class="flex flex-grow-0">
-                <label for="name" class="w-1/3">Surname: </label>
-                <input id="surname" class="w-2/3" bind:value={last}>
+            <div class="flex flex-grow-0 px-2 py-2">
+                <label for="surname" class="w-1/3">Surname: </label>
+                <input id="surname" class="w-2/3 border-2 border-beige-300 rounded" bind:value={last} jumpArea="edit">
             </div>
-        </article>
+        </section>
     </div>
 
-    <div id="buttons" class="mt-4 flex flex-grow-0 place-content-center items-center justify-items-center">
-        <button on:click={createUser} class="btn box-border font-medium text-blue-500 bg-beige-100 border-blue-500 border-2 flex-grow-0 mx-2">Create</button>
-        <button on:click={updateUser} class="btn box-border font-medium text-blue-500 bg-beige-100 border-blue-500 border flex-grow-0 mx-2">Update</button>
-        <button on:click={deleteUser} class="btn box-content font-medium bg-red-700 flex-grow-0 mx-2">Delete</button>
+    <div id="buttons" class="mt-4 flex flex-grow-0">
+        <button id="create" on:click={createUser} class="btn btn-outline-beige flex-grow-0 mx-2" jumpArea="action">Create</button>
+        <button id="update" on:click={updateUser} class="btn btn-outline-beige flex-grow-0 mx-2" jumpArea="action">Update</button>
+        <button id="delete" on:click={deleteUser} class="btn btn-red bg-red-700 border-2 border-red-700 flex-grow-0 mx-2" jumpArea="action">Delete</button>
     </div>
-</section>
+</article>

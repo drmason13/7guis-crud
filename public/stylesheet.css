@@ -615,24 +615,12 @@ video {
 }
 
 .btn {
-  --bg-opacity: 1;
-  background-color: #4299e1;
-  background-color: rgba(66, 153, 225, var(--bg-opacity));
-  --text-opacity: 1;
-  color: #fff;
-  color: rgba(255, 255, 255, var(--text-opacity));
-  font-weight: 700;
+  font-weight: 500;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
   padding-right: 1rem;
   border-radius: 0.25rem
-}
-
-.btn:hover {
-  --bg-opacity: 1;
-  background-color: #2b6cb0;
-  background-color: rgba(43, 108, 176, var(--bg-opacity));
 }
 
 .btn:focus {
@@ -645,9 +633,66 @@ video {
   cursor: not-allowed;
 }
 
-.center {
-  align-items: center;
-  align-content: center;
+.btn-outline-beige {
+  --text-opacity: 1;
+  color: #94938B;
+  color: rgba(148, 147, 139, var(--text-opacity));
+  --bg-opacity: 1;
+  background-color: #FAFAF8;
+  background-color: rgba(250, 250, 248, var(--bg-opacity));
+  --border-opacity: 1;
+  border-color: #A4A39A;
+  border-color: rgba(164, 163, 154, var(--border-opacity));
+  border-width: 2px;
+}
+
+.btn-outline-beige:hover {
+  --text-opacity: 1;
+  color: #4A4945;
+  color: rgba(74, 73, 69, var(--text-opacity));
+  --bg-opacity: 1;
+  background-color: #E8E8E5;
+  background-color: rgba(232, 232, 229, var(--bg-opacity));
+}
+
+.btn-outline-beige:focus {
+  --text-opacity: 1;
+  color: #4A4945;
+  color: rgba(74, 73, 69, var(--text-opacity));
+  --bg-opacity: 1;
+  background-color: #E8E8E5;
+  background-color: rgba(232, 232, 229, var(--bg-opacity));
+}
+
+.btn-red {
+  --bg-opacity: 1;
+  background-color: #c53030;
+  background-color: rgba(197, 48, 48, var(--bg-opacity));
+  --text-opacity: 1;
+  color: #FDFDFA;
+  color: rgba(253, 253, 250, var(--text-opacity));
+  --border-opacity: 1;
+  border-color: #c53030;
+  border-color: rgba(197, 48, 48, var(--border-opacity));
+  border-width: 2px;
+}
+
+.btn-red:hover {
+  --bg-opacity: 1;
+  background-color: #742a2a;
+  background-color: rgba(116, 42, 42, var(--bg-opacity));
+  --border-opacity: 1;
+  border-color: #742a2a;
+  border-color: rgba(116, 42, 42, var(--border-opacity));
+}
+
+.btn-red:focus {
+  --bg-opacity: 1;
+  background-color: #742a2a;
+  background-color: rgba(116, 42, 42, var(--bg-opacity));
+  --border-opacity: 1;
+  border-color: #742a2a;
+  border-color: rgba(116, 42, 42, var(--border-opacity));
 }
 
 .space-y-0 > :not(template) ~ :not(template) {
