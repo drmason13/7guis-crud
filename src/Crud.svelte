@@ -34,7 +34,6 @@
     let selected = null;
 
     function selectUser(e, user) {
-        // fuuuuu... jumpAreas['selected'] = e.target;
         selected = user.id;
         first = user.first;
         last = user.last;
