@@ -5,7 +5,17 @@
     import Edit from './Edit.svelte';
     import { v4 as uuid } from 'uuid';
 
+	import { users } from './stores.js';
+
+    // searching
     let search = "";
+    $: visibleUsers = searchUsers(search, $users);
+
+    function searchUsers(search, users) {
+        return Object.values(users).filter(user => `${user.first} ${user.last} ${user.last}, ${user.first}`.toLowerCase().includes(search.toLowerCase()))
+    }
+
+    // editing
     let first = "";
     let last = "";
     
@@ -15,22 +25,7 @@
         last = "";
     }
 
-    const initialUsers = [
-        { first: 'Hans', last: 'Emil' },
-        { first: 'Max', last: 'Mustermann' },
-        { first: 'Roman', last: 'Tisch' }
-    ]
-
-    let users = {};
-    init();
-
-    function init() { 
-        for (const user of initialUsers) {
-            const id = uuid();
-            users[id] = { ...user, id };
-        }
-    }
-
+    // selecting
     let selected = null;
 
     function selectUser(e, user) {
@@ -39,23 +34,30 @@
         last = user.last;
     }
 
+    // crud functions
     function createUser() {
         const id = uuid();
-        users[id] = { first, last, id };
-        users = users;
+        users.update(users => {
+            users[id] = { first, last, id };
+            return users
+        });
         reset();
     }
 
     function updateUser() {
         if (!selected) { return }
-        users[selected].first = first;
-        users[selected].last = last;
+        users.update(users => {
+            users[selected].first = first;
+            users[selected].last = last;
+            return users
+        });
     }
 
     function deleteUser() {
-        let newUsers = users;
-        delete newUsers[selected];
-        users = newUsers;
+        users.update(users => {
+            delete users[selected];
+            return users;
+        });
         reset();
     }
 </script>
@@ -68,7 +70,7 @@
     <div class="flex flex-col sm:flex-row">
         <section id="left" class="flex flex-col mx-2">
             <Search bind:search></Search>
-            <DbView styles="h-64 border-2 border-beige-300 flex flex-col items-stretch text-left content-start overflow-auto" items={users} let:item={user}>
+            <DbView styles="h-64 border-2 border-beige-300 flex flex-col items-stretch text-left content-start overflow-auto" items={visibleUsers} let:item={user}>
                 <User {user} {selected} {selectUser}></User>
             </DbView>
         </section>
